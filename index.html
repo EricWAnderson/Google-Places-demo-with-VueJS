@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Places Autocomplete</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="container">
+      <input id="autocomplete" type="text" onfocus="geolocate()">
+
+      <form>
+        <input id="name" type="text" placeholder="Name">
+        <input id="formatted_phone_number" type="text" placeholder="Phone Number">
+        <input id="website" type="text" placeholder="Website">
+        <input id="street_number" type="text" placeholder="Street Number">
+        <input id="route" type="text" placeholder="Street Name">
+        <input id="locality" type="text" placeholder="City">
+        <input id="administrative_area_level_1" type="text" placeholder="State">
+        <input id="postal_code" type="text" placeholder="Zip Code">
+      </form>
+    </div>
+
+    <script type="text/javascript" src="./main.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArcxfKJB5OrhQSvAt3H5fnJyN0KeTwWGg&libraries=places&callback=initAutocomplete"></script>
+  </body>
+</html>
