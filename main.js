@@ -1,54 +1,72 @@
-const businessDetails = ['name', 'formatted_phone_number', 'website'];
 
-const addressComponents = {
-  street_number: 'long_name',
-  route: 'long_name',
-  locality: 'long_name',
-  administrative_area_level_1: 'short_name',
-  postal_code: 'short_name'
-};
+// Vue Material Design
+Vue.use(VueMaterial)
 
-function initAutocomplete() {
-  autocomplete = new google.maps.places.Autocomplete(
-    document.getElementById('autocomplete'),
-    { types: ['establishment'] }
-  );
+// our Vue
+var places = new Vue({
+  el: '#places',
+  data: {
+    address: {
+      street_number: '',
+      route: '',
+      locality: '',
+      administrative_area_level_1: '',
+      postal_code: ''
+    },
+    showAddress: false,
+    showPhotos: false,
+    showCauses: false,
+    name: '',
+    phone: '',
+    website: '',
+    open_hours: [],
+    photos: [],
+    causes: ['American Cancer Society', 'Paws for Paws', 'DAV']
+  },
+  methods: {
+    initAutocomplete: function() {
+      autocomplete = new google.maps.places.Autocomplete(
+        document.getElementById('autocomplete'),
+        { types: ['establishment'] }
+      );
 
-  autocomplete.addListener('place_changed', fillInForm);
-}
+      autocomplete.addListener('place_changed', this.getPlace);
+    },
+    getPlace: function() {
+      const place = autocomplete.getPlace();
+      console.log(place);
 
-function fillInForm() {
-  const place = autocomplete.getPlace();
-  console.log(place);
+      this.name = place.name;
+      this.phone = place.formatted_phone_number;
+      this.website = place.website;
 
-  businessDetails.forEach(detail => {
-    document.getElementById(detail).value = place[detail];
-  });
-
-  place.address_components.forEach(component => {
-    const addressType = component.types[0]
-
-    if (addressComponents[addressType]) {
-      const val = component[addressComponents[addressType]];
-      document.getElementById(addressType).value = val;
-    }
-  });
-}
-
-function geolocate() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(position => {
-      const geolocation = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
+      if (place.opening_hours) {
+        this.open_hours = place.opening_hours.weekday_text.slice(0);
       };
 
-      const circle = new google.maps.Circle({
-        center: geolocation,
-        radius: position.coords.accuracy
+      if (place.photos) {
+        place.photos.forEach(photo => {
+          this.photos.push({height: photo.height, width: photo.width, url: photo.getUrl({'maxWidth': 250, 'maxHeight': 250}) });
+        });
+      }
+
+      place.address_components.forEach(component => {
+        const addressType = component.types[0];
+
+        if (addressType in this.address) {
+          this.address[addressType] = component['short_name'];
+        }
       });
 
-      autocomplete.setBounds(circle.getBounds());
-    });
+      this.showAddress = true;
+    },
+    displayPhotos: function() {
+      this.showAddress = false;
+      this.showPhotos = true;
+    },
+    displayCause: function() {
+      this.showPhotos = false;
+      this.showCauses = true;
+    }
   }
-}
+});

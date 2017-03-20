@@ -3,25 +3,100 @@
   <head>
     <meta charset="utf-8">
     <title>Places Autocomplete</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="./vue-material.css">
+    <link rel="stylesheet" href="./style.css">
+    <script type="text/javascript" src="./vue.js"></script>
+    <script src="./vue-material.js"></script>
   </head>
   <body>
-    <div class="container">
-      <input id="autocomplete" type="text" onfocus="geolocate()">
+    <div class="container" id="places">
+      <md-toolbar>
+        <h1>Sign up your business for DIVI UP!</h1>
+      </md-toolbar>
 
-      <form>
-        <input id="name" type="text" placeholder="Name">
-        <input id="formatted_phone_number" type="text" placeholder="Phone Number">
-        <input id="website" type="text" placeholder="Website">
-        <input id="street_number" type="text" placeholder="Street Number">
-        <input id="route" type="text" placeholder="Street Name">
-        <input id="locality" type="text" placeholder="City">
-        <input id="administrative_area_level_1" type="text" placeholder="State">
-        <input id="postal_code" type="text" placeholder="Zip Code">
-      </form>
+      <input id="autocomplete" type="text">
+
+      <transition name="slide-fade">
+        <md-card v-if="showAddress">
+          <md-card-area md-inset>
+            <md-card-header>
+              <h2 class="md-title">{{ name }}</h2>
+              <div class="md-subhead">
+                <md-icon>location_on</md-icon>
+                <span>{{ address.street_number }} {{ address.route }}, {{ address.locality }}, {{ address.administrative_area_level_1 }} {{ address.postal_code }}</span>
+              </div>
+              <div class="md-subhead">
+                <md-icon>call</md-icon>
+                <span>{{ phone }}</span>
+              </div>
+              <div class="md-subhead">
+                <md-icon>launch</md-icon>
+                <span><a :href="website">website</a></span>
+              </div>
+            </md-card-header>
+
+            <md-card-content>
+              {{ }}
+            </md-card-content>
+          </md-card-area>
+
+          <md-card-content>
+            <h3 class="md-subheading">Open Hours</h3>
+            <div class="card-reservation">
+              <md-icon>access_time</md-icon>
+              <md-button-toggle md-single class="md-button-group">
+                <md-button>5:30PM</md-button>
+                <md-button>7:30PM</md-button>
+                <md-button>9:00PM</md-button>
+              </md-button-toggle>
+            </div>
+          </md-card-content>
+
+          <md-card-actions>
+            <md-button class="md-primary">Reserve</md-button>
+          </md-card-actions>
+        </md-card>
+        <!-- <div v-if="showAddress" class="message">
+          <div>
+            <p>{{ name }}</p>
+            <p>{{ address.street_number }} {{ address.route }}</p>
+            <p>{{ address.locality }}, {{ address.administrative_area_level_1 }} {{ address.postal_code }}</p>
+            <p>{{ phone }}</p>
+            <a :href="website">website</a>
+
+            <ul>
+              <li v-for="hours in open_hours">
+                {{ hours }}
+              </li>
+            </ul>
+          </div>
+
+          <md-button class="md-raised md-primary" v-on:click="displayPhotos">Next</md-button>
+        </div> -->
+      </transition>
+
+      <transition name="slide-fade">
+        <div v-if="showPhotos" class="message">
+          <h2>Choose a photo</h2>
+          <span v-for="photo in photos">
+            <md-button class="md-raised md-primary" v-on:click="displayCause"><img v-bind:src="photo.url" /></md-button>
+          </span>
+        </div>
+      </transition>
+
+      <transition name="slide-fade">
+        <div v-if="showCauses" class="message">
+          <h2>Choose a cause</h2>
+          <span v-for="cause in causes">
+            <md-button class="md-raised md-primary">{{ cause }}</md-button>
+          </span>
+        </div>
+      </transition>
     </div>
 
     <script type="text/javascript" src="./main.js"></script>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArcxfKJB5OrhQSvAt3H5fnJyN0KeTwWGg&libraries=places&callback=initAutocomplete"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArcxfKJB5OrhQSvAt3H5fnJyN0KeTwWGg&libraries=places&callback=places.initAutocomplete"></script>
   </body>
 </html>
