@@ -6,6 +6,7 @@ Vue.use(VueMaterial)
 var places = new Vue({
   el: '#places',
   data: {
+    signUpStep: 'Business Sign Up',
     address: {
       street_number: '',
       route: '',
@@ -16,11 +17,14 @@ var places = new Vue({
     showAddress: false,
     showPhotos: false,
     showCauses: false,
+    showConfirm: false,
     name: '',
     phone: '',
     website: '',
     open_hours: [],
+    open_now: false,
     photos: [],
+    photoUrl: '',
     causes: ['American Cancer Society', 'Paws for Paws', 'DAV']
   },
   methods: {
@@ -32,7 +36,30 @@ var places = new Vue({
 
       autocomplete.addListener('place_changed', this.getPlace);
     },
+    resetData: function() {
+      this.signUpStep = 'Business Sign Up',
+      this.address = {
+        street_number: '',
+        route: '',
+        locality: '',
+        administrative_area_level_1: '',
+        postal_code: ''
+      },
+      this.showAddress = false,
+      this.showPhotos = false,
+      this.showCauses = false,
+      this.showConfirm = false,
+      this.name = '',
+      this.phone = '',
+      this.website = '',
+      this.open_hours = [],
+      this.open_now = false,
+      this.photos = [],
+      this.photoUrl = ''
+    },
     getPlace: function() {
+      this.resetData();
+
       const place = autocomplete.getPlace();
       console.log(place);
 
@@ -41,12 +68,13 @@ var places = new Vue({
       this.website = place.website;
 
       if (place.opening_hours) {
+        this.open_now = place.opening_hours.open_now;
         this.open_hours = place.opening_hours.weekday_text.slice(0);
       };
 
       if (place.photos) {
         place.photos.forEach(photo => {
-          this.photos.push({height: photo.height, width: photo.width, url: photo.getUrl({'maxWidth': 250, 'maxHeight': 250}) });
+          this.photos.push({height: photo.height, width: photo.width, url: photo.getUrl({'maxWidth': 500, 'maxHeight': 500}) });
         });
       }
 
@@ -64,9 +92,15 @@ var places = new Vue({
       this.showAddress = false;
       this.showPhotos = true;
     },
-    displayCause: function() {
+    displayCause: function(photoUrl) {
+      this.photoUrl = photoUrl,
       this.showPhotos = false;
       this.showCauses = true;
+    },
+    displayConfirm: function() {
+      this.signUpStep = 'Welcome to DIVI!'
+      this.showCauses = false;
+      this.showConfirm = true;
     }
   }
 });

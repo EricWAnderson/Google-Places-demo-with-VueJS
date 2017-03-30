@@ -10,90 +10,92 @@
     <script type="text/javascript" src="./vue.js"></script>
     <script src="./vue-material.js"></script>
   </head>
-  <body>
+
+  <body class="md-theme-default">
     <div class="container" id="places">
-      <md-toolbar>
-        <h1>Sign up your business for DIVI UP!</h1>
-      </md-toolbar>
+      <md-card>
+        <md-card-header>
+          <h1><img src="DIVI_circle_color-1024x1024.png" width="20px" height="20px" />{{ signUpStep }}</h1>
+        </md-card-header>
 
-      <input id="autocomplete" type="text">
+        <input id="autocomplete" type="text">
 
-      <transition name="slide-fade">
-        <md-card v-if="showAddress">
-          <md-card-area md-inset>
-            <md-card-header>
-              <h2 class="md-title">{{ name }}</h2>
-              <div class="md-subhead">
-                <md-icon>location_on</md-icon>
-                <span>{{ address.street_number }} {{ address.route }}, {{ address.locality }}, {{ address.administrative_area_level_1 }} {{ address.postal_code }}</span>
-              </div>
-              <div class="md-subhead">
-                <md-icon>call</md-icon>
-                <span>{{ phone }}</span>
-              </div>
-              <div class="md-subhead">
-                <md-icon>launch</md-icon>
-                <span><a :href="website">website</a></span>
-              </div>
-            </md-card-header>
+        <transition name="slide-fade">
+          <md-card v-if="showAddress">
+            <md-card-area md-inset>
+              <md-card-header>
+                <h2 class="md-title">{{ name }}</h2>
+                <div class="md-subhead">
+                  <md-icon>location_on</md-icon>
+                  <span>{{ address.street_number }} {{ address.route }}, {{ address.locality }}, {{ address.administrative_area_level_1 }} {{ address.postal_code }}</span>
+                </div>
+                <div class="md-subhead">
+                  <md-icon>call</md-icon>
+                  <span>{{ phone }}</span>
+                </div>
+                <div class="md-subhead">
+                  <md-icon>launch</md-icon>
+                  <span><a :href="website">website</a></span>
+                </div>
+              </md-card-header>
+            </md-card-area>
 
             <md-card-content>
-              {{ }}
+              <h3 class="md-subheading">Open Hours</h3>
+              <div>
+                <md-button-toggle md-single class="md-button-group" v-for="hours in open_hours">
+                  <md-button>{{ hours }}</md-button>
+                </md-button-toggle>
+              </div>
             </md-card-content>
-          </md-card-area>
 
-          <md-card-content>
-            <h3 class="md-subheading">Open Hours</h3>
-            <div class="card-reservation">
-              <md-icon>access_time</md-icon>
-              <md-button-toggle md-single class="md-button-group">
-                <md-button>5:30PM</md-button>
-                <md-button>7:30PM</md-button>
-                <md-button>9:00PM</md-button>
-              </md-button-toggle>
-            </div>
-          </md-card-content>
+            <md-card-actions>
+              <md-button class="md-raised md-primary" v-on:click.native="displayPhotos">Next</md-button>
+            </md-card-actions>
+          </md-card>
+        </transition>
 
-          <md-card-actions>
-            <md-button class="md-primary">Reserve</md-button>
-          </md-card-actions>
-        </md-card>
-        <!-- <div v-if="showAddress" class="message">
-          <div>
-            <p>{{ name }}</p>
-            <p>{{ address.street_number }} {{ address.route }}</p>
-            <p>{{ address.locality }}, {{ address.administrative_area_level_1 }} {{ address.postal_code }}</p>
-            <p>{{ phone }}</p>
-            <a :href="website">website</a>
+        <transition name="slide-fade">
+          <md-card v-if="showPhotos" md-with-hover>
+            <h2>Choose a photo</h2>
+            <md-card-media v-for="photo in photos" md-ratio="4:3">
+              <img v-bind:src="photo.url" v-on:click="displayCause(photo.url)" />
+            </md-card-media>
+          </md-card>
+        </transition>
 
-            <ul>
-              <li v-for="hours in open_hours">
-                {{ hours }}
-              </li>
-            </ul>
-          </div>
+        <transition name="slide-fade">
+          <md-card v-if="showCauses">
+            <h2>Choose a cause</h2>
+            <span v-for="cause in causes">
+              <md-button class="md-raised md-primary" v-on:click.native="displayConfirm">{{ cause }}</md-button>
+            </span>
+          </md-card>
+        </transition>
 
-          <md-button class="md-raised md-primary" v-on:click="displayPhotos">Next</md-button>
-        </div> -->
-      </transition>
+        <transition name="slide-fade">
+          <md-card v-if="showConfirm" class="card-example">
+            <md-card-area md-inset>
+              <md-card-media md-ratio="16:9">
+                <img v-bind:src="photoUrl">
+              </md-card-media>
 
-      <transition name="slide-fade">
-        <div v-if="showPhotos" class="message">
-          <h2>Choose a photo</h2>
-          <span v-for="photo in photos">
-            <md-button class="md-raised md-primary" v-on:click="displayCause"><img v-bind:src="photo.url" /></md-button>
-          </span>
-        </div>
-      </transition>
+              <md-card-header>
+                <h2 class="md-title">{{ name }}</h2>
+                <div class="md-subhead">
+                  <md-icon>location_on</md-icon>
+                  <span>{{ address.street_number }} {{ address.route }}, {{ address.locality }}, {{ address.administrative_area_level_1 }} {{ address.postal_code }}</span>
+                </div>
+              </md-card-header>
+            </md-card-area>
 
-      <transition name="slide-fade">
-        <div v-if="showCauses" class="message">
-          <h2>Choose a cause</h2>
-          <span v-for="cause in causes">
-            <md-button class="md-raised md-primary">{{ cause }}</md-button>
-          </span>
-        </div>
-      </transition>
+            <md-card-content>
+              <h3 class="md-subheading" v-if="open_now">Open Now!</h3>
+              <h3 class="md-subheading" v-else="open_now">Closed</h3>
+            </md-card-content>
+          </md-card>
+        </transition>
+      </md-card>
     </div>
 
     <script type="text/javascript" src="./main.js"></script>
